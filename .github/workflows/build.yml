@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
 
 env:
-  # Shuts up the Node.js warning
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -15,14 +14,16 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 17
+    # We use Java 11 here, as it's the safest bridge for Gradle 7.x
+    - name: Set up JDK 11
       uses: actions/setup-java@v4
       with:
-        java-version: '17' 
+        java-version: '11' 
         distribution: 'temurin'
 
-    - name: Generate Missing Engine
-      run: gradle wrapper
+    # Force generation of an older, compatible Gradle engine
+    - name: Generate Legacy Engine
+      run: gradle wrapper --gradle-version 7.4.2
 
     - name: Make Engine Executable
       run: chmod +x ./gradlew
